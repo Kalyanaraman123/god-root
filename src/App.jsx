@@ -14,17 +14,36 @@ const SAMPLE_PRODUCTS = [
 function currency(paise) { return `₹${(paise / 100).toFixed(2)}`; }
 
 /* ---------- TopBar ---------- */
+/* ---------- TopBar (marquee style) ---------- */
 function TopBar() {
+  // messages array -> you can add more messages later
+  const messages = [
+    "care@god_root.in",
+    "Free shipping on orders over ₹999",
+    "Hot deals this week — limited stock!"
+  ];
+
   return (
-    <div className="topbar bg-white border-b">
-      <div className="container inner flex items-center justify-between text-sm text-gray-600 py-1">
-        <div className="truncate text-left">care@god_root.in</div>
-        <div className="text-center w-full max-w-xs">Free shipping on orders over ₹999</div>
-        <div className="text-right w-24" />
+    <div className="topbar-outer">
+      <div className="topbar container-inner">
+        <div className="topbar-left">care@god_root.in</div>
+
+        {/* center scrolling message */}
+        <div className="topbar-marquee" aria-hidden="true">
+          <div className="marquee-track">
+            {/* repeat messages twice to create continuous scroll */}
+            {[...messages, ...messages].map((m, i) => (
+              <div key={i} className="marquee-item">{m}</div>
+            ))}
+          </div>
+        </div>
+
+        <div className="topbar-right">Mon–Sat: 9am–6pm</div>
       </div>
     </div>
   );
 }
+
 
 /* ---------- Header ---------- */
 function MainHeader({ logoUrl, onOpenCart, cartCount, onOpenAdmin }) {
@@ -76,6 +95,31 @@ function MainHeader({ logoUrl, onOpenCart, cartCount, onOpenAdmin }) {
         </div>
       </div>
     </header>
+  );
+}
+
+/* ---------- Hero (full-bleed, nuzox-like) ---------- */
+function Hero() {
+  return (
+    <section className="hero-outer">
+      <div className="hero container-inner">
+        <div className="hero-left">
+          <div className="eyebrow">New Arrival</div>
+          <h1 className="hero-title">Ultra Comfort — Signature Prints</h1>
+          <p className="hero-sub">Soft fabrics, bold colors. Free shipping on all orders above ₹999.</p>
+
+          <div className="hero-cta">
+            <button className="btn-primary">Shop Now</button>
+            <button className="btn-ghost">Collections</button>
+          </div>
+        </div>
+
+        <div className="hero-right">
+          {/* Keep an image in public/hero.webp or change path */}
+          <img src="/hero.webp" alt="Hero Product" onError={(e)=>{ e.currentTarget.src='/products/design1.jpeg'; }} />
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -337,7 +381,7 @@ export default function App() {
     <div className="min-h-screen">
       <TopBar />
       <MainHeader logoUrl={logoUrl} onOpenCart={() => setCartOpen(true)} cartCount={cartCount} onOpenAdmin={() => setAdminOpen(v=>!v)} />
-
+      <Hero />
       <main className="container py-6 px-4">
         <section className="panel p-4">
           <div className="flex items-center justify-between mb-4">
