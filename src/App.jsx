@@ -50,7 +50,7 @@ function MainHeader({ logoUrl, onOpenCart, cartCount, onOpenAdmin }) {
         <div className="header-center">
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12 }}>
             {/* Logo image */}
-            <img src={logoUrl} alt="God Root logo" style={{ height: 84, objectFit: "contain" }} onError={(e)=>{ e.target.src = "/logo.png"; }} />
+            <img src={logoUrl} alt="God Root logo" style={{ height: 54, objectFit: "contain" }} onError={(e)=>{ e.target.src = "/logo.png"; }} />
            </div>
         </div>
 
