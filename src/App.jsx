@@ -1,14 +1,7 @@
 // src/App.jsx
 import React, { useEffect, useState } from "react";
 
-/*
-  Dynamic God Root app:
-  - Logo is loaded from /logo.png by default (public/logo.png)
-  - Admin panel lets you change logo URL and edit products (saved to localStorage)
-  - Products initially come from PRODUCTS constant but edits persist in localStorage
-*/
-
-/* ---------- initial sample products ---------- */
+/* ---------- sample products (keep files in public/products/) ---------- */
 const SAMPLE_PRODUCTS = [
   { id: 1, title: "Teddy bear print pant", price: 29900, oldPrice: 49900, sizes: ["S", "M", "L", "XL"], img: "/products/design1.jpeg" },
   { id: 2, title: "Tropical bloom pant", price: 33900, oldPrice: 59900, sizes: ["S", "M", "L", "XL"], img: "/products/design2.jpeg" },
@@ -18,80 +11,105 @@ const SAMPLE_PRODUCTS = [
   { id: 6, title: "Black pant", price: 29900, oldPrice: 49900, sizes: ["S", "M", "L", "XL"], img: "/products/design3.jpeg" },
 ];
 
-/* ---------- helpers ---------- */
-function currency(paise) {
-  return `₹${(paise / 100).toFixed(2)}`;
-}
+function currency(paise) { return `₹${(paise / 100).toFixed(2)}`; }
 
-/* ---------- top bar & header ---------- */
+/* ---------- TopBar ---------- */
 function TopBar() {
   return (
-    <div className="topbar">
-      <div className="container inner">
-        <div style={{ flex: 1, textAlign: "left" }}>care@god_root.in</div>
-        <div style={{ flex: 1, textAlign: "center" }}>Free shipping on orders over ₹999</div>
-        <div style={{ flex: 1, textAlign: "right" }}></div>
+    <div className="topbar bg-white border-b">
+      <div className="container inner flex items-center justify-between text-sm text-gray-600 py-1">
+        <div className="truncate text-left">care@god_root.in</div>
+        <div className="text-center w-full max-w-xs">Free shipping on orders over ₹999</div>
+        <div className="text-right w-24" />
       </div>
     </div>
   );
 }
 
+/* ---------- Header ---------- */
 function MainHeader({ logoUrl, onOpenCart, cartCount, onOpenAdmin }) {
   return (
-    <div className="main-header">
-      <div className="container header-grid">
-        <div className="header-left">
-          <button className="icon-btn" aria-label="menu">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M3 6h18M3 12h18M3 18h18" /></svg>
+    <header className="main-header bg-transparent sticky top-0 z-40">
+      <div className="container px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <button className="icon-btn md:hidden" aria-label="menu">
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" d="M3 6h18M3 12h18M3 18h18" /></svg>
           </button>
+
+          <nav className="hidden md:flex gap-6 text-sm text-gray-700">
+            <a className="hover:text-gray-900">Shop</a>
+            <a className="hover:text-gray-900">Collections</a>
+            <a className="hover:text-gray-900">About</a>
+          </nav>
         </div>
 
-        {/* center brand with logo */}
-        <div className="header-center">
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12 }}>
-            {/* Logo image */}
-            <img src={logoUrl} alt="God Root logo" style={{ height: 54, objectFit: "contain" }} onError={(e)=>{ e.target.src = "/logo.png"; }} />
-           </div>
+        <div className="header-center flex-1 flex items-center justify-center min-w-0">
+          <div className="flex items-center gap-3">
+            <img
+              className="site-logo"
+              src={logoUrl}
+              alt="God Root logo"
+              onError={(e) => { e.currentTarget.src = "/logo.png"; }}
+            />
+          </div>
         </div>
 
-        <div className="header-right">
+        <div className="flex items-center gap-2">
           <button className="icon-btn" aria-label="search">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" /></svg>
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/></svg>
           </button>
 
-          <button className="px-3 py-2 text-sm rounded-md" aria-label="login">Login</button>
+          <button className="hidden sm:inline px-3 py-1 rounded-md text-sm">Login</button>
 
           <button className="icon-btn" aria-label="favorites" title="Favorites">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M20.8 8.6a5.5 5.5 0 00-7.8-7.8L12 2.6l-1 1-1-1A5.5 5.5 0 002.2 8.6c0 6.8 9.8 11.6 9.8 11.6s9.8-4.8 9.8-11.6z" /></svg>
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" d="M20.8 8.6a5.5 5.5 0 00-7.8-7.8L12 2.6l-1 1-1-1A5.5 5.5 0 002.2 8.6c0 6.8 9.8 11.6 9.8 11.6s9.8-4.8 9.8-11.6z"/></svg>
           </button>
 
-          <button onClick={onOpenCart} className="icon-btn" aria-label="cart">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4"/><circle cx="9" cy="20" r="1"/><circle cx="20" cy="20" r="1"/></svg>
-            {cartCount > 0 && <span style={{ position: "absolute", top: -8, right: -8, background: "#ef4444", color: "#fff", padding: "2px 6px", borderRadius: 999, fontSize: 11 }}>{cartCount}</span>}
+          <button onClick={onOpenCart} className="icon-btn relative" aria-label="cart">
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4"/><circle cx="9" cy="20" r="1"/><circle cx="20" cy="20" r="1"/></svg>
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full px-2">{cartCount}</span>
+            )}
           </button>
 
-          <button onClick={onOpenAdmin} className="px-3 py-2 ml-2 rounded-md border text-sm">Admin</button>
+          <button onClick={onOpenAdmin} className="hidden md:inline px-3 py-1 ml-2 rounded-md border text-sm">Admin</button>
         </div>
       </div>
-    </div>
+    </header>
   );
 }
 
-/* ---------- product card ---------- */
+/* ---------- ProductCard (robust image) ---------- */
 function ProductCard({ p, onQuick, onAdd, onEdit }) {
   return (
-    <article className="card">
-      <div className="ratio-1-1">
-        <img src={p.img} alt={p.title} loading="lazy" onError={(e)=>{ e.target.src = "/placeholder.png"; }} />
+    <article className="card overflow-hidden">
+      <div className="product-img-wrap">
+        <img
+          src={p.img}
+          alt={p.title}
+          loading="lazy"
+          decoding="async"
+          onLoad={(e) => e.currentTarget.classList.add("loaded")}
+          onError={(e) => {
+            const el = e.currentTarget;
+            if (!el.dataset.fallbacked) {
+              el.dataset.fallbacked = "1";
+              el.src = "/placeholder.svg";
+            } else {
+              el.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='1200'%3E%3Crect width='100%25' height='100%25' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='52%25' font-family='Arial' font-size='48' text-anchor='middle' fill='%239ca3af'%3EImage not available%3C/text%3E%3C/svg%3E";
+            }
+          }}
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        />
       </div>
 
-      <div className="p">
+      <div className="p-4">
         <div className="flex items-start justify-between">
-          <h3 className="text-sm font-semibold">{p.title}</h3>
+          <h3 className="text-sm font-semibold truncate">{p.title}</h3>
           <div className="text-xs text-gray-500">Sizes: {p.sizes.join(" ")}</div>
         </div>
 
-        <div className="mt-4 flex items-center justify-between">
+        <div className="mt-3 flex items-center justify-between">
           <div>
             <div className="old-price text-sm">{currency(p.oldPrice)}</div>
             <div className="text-lg font-bold mt-1">{currency(p.price)}</div>
@@ -117,12 +135,12 @@ function ProductCard({ p, onQuick, onAdd, onEdit }) {
   );
 }
 
-/* ---------- quick view modal ---------- */
+/* ---------- QuickView modal ---------- */
 function QuickView({ product, onClose, onAdd }) {
   const [size, setSize] = useState(product?.sizes?.[0] ?? null);
   if (!product) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
       <div className="bg-white rounded-2xl max-w-4xl w-full mx-4 z-10 shadow-2xl overflow-hidden">
         <div className="grid md:grid-cols-2">
@@ -138,7 +156,7 @@ function QuickView({ product, onClose, onAdd }) {
 
             <div className="mt-5">
               <div className="text-sm text-gray-600 mb-2">Choose size</div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 {product.sizes.map(s => (
                   <button key={s} onClick={() => setSize(s)} className={`px-3 py-1 border rounded ${size === s ? 'bg-black text-white' : ''}`}>{s}</button>
                 ))}
@@ -156,11 +174,9 @@ function QuickView({ product, onClose, onAdd }) {
   );
 }
 
-/* ---------- edit modal (dynamic editing for product or logo) ---------- */
+/* ---------- Edit modal (product + logo) ---------- */
 function EditModal({ open, item, type, onClose, onSave }) {
-  // type: "product" or "logo"
   const [form, setForm] = useState({});
-
   useEffect(() => {
     if (!open) return;
     if (type === "product") {
@@ -173,7 +189,7 @@ function EditModal({ open, item, type, onClose, onSave }) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-60 flex items-center justify-center">
+    <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <div className="bg-white rounded-2xl shadow-2xl z-10 p-6 max-w-lg w-full">
         <h3 className="text-lg font-semibold mb-4">{type === "logo" ? "Edit Logo" : "Edit Product"}</h3>
@@ -181,44 +197,44 @@ function EditModal({ open, item, type, onClose, onSave }) {
         {type === "logo" ? (
           <>
             <label className="block text-sm text-gray-600">Logo URL (or keep /logo.png)</label>
-            <input className="w-full border rounded px-3 py-2 mt-2" value={form.logoUrl} onChange={(e)=>setForm({...form, logoUrl: e.target.value})} />
+            <input className="w-full border rounded px-3 py-2 mt-2" value={form.logoUrl || ""} onChange={(e) => setForm({ ...form, logoUrl: e.target.value })} />
             <div className="mt-4 flex gap-2 items-center">
-              <img src={form.logoUrl} alt="preview" style={{height:40, objectFit:"contain"}} onError={(e)=>{ e.target.src="/logo.png"; }} />
+              <img src={form.logoUrl || "/logo.png"} alt="preview" style={{ height: 40, objectFit: "contain" }} onError={(e) => { e.currentTarget.src = "/logo.png"; }} />
               <div className="text-sm text-gray-500">Preview</div>
             </div>
             <div className="mt-6 flex justify-end gap-2">
               <button onClick={onClose} className="px-4 py-2 border rounded">Cancel</button>
-              <button onClick={()=>onSave(form)} className="px-4 py-2 bg-indigo-600 text-white rounded">Save</button>
+              <button onClick={() => onSave(form)} className="px-4 py-2 bg-indigo-600 text-white rounded">Save</button>
             </div>
           </>
         ) : (
           <>
             <label className="block text-sm text-gray-600">Title</label>
-            <input className="w-full border rounded px-3 py-2 mt-2" value={form.title||""} onChange={(e)=>setForm({...form, title:e.target.value})} />
+            <input className="w-full border rounded px-3 py-2 mt-2" value={form.title || ""} onChange={(e) => setForm({ ...form, title: e.target.value })} />
 
             <div className="mt-3 grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-sm text-gray-600">Price (INR)</label>
-                <input type="number" className="w-full border rounded px-3 py-2 mt-2" value={form.price?form.price/100:""} onChange={(e)=>setForm({...form, price: Math.round(Number(e.target.value||0)*100)})} />
+                <input type="number" className="w-full border rounded px-3 py-2 mt-2" value={form.price ? form.price / 100 : ""} onChange={(e) => setForm({ ...form, price: Math.round(Number(e.target.value || 0) * 100) })} />
               </div>
               <div>
                 <label className="block text-sm text-gray-600">Old price (INR)</label>
-                <input type="number" className="w-full border rounded px-3 py-2 mt-2" value={form.oldPrice?form.oldPrice/100:""} onChange={(e)=>setForm({...form, oldPrice: Math.round(Number(e.target.value||0)*100)})} />
+                <input type="number" className="w-full border rounded px-3 py-2 mt-2" value={form.oldPrice ? form.oldPrice / 100 : ""} onChange={(e) => setForm({ ...form, oldPrice: Math.round(Number(e.target.value || 0) * 100) })} />
               </div>
             </div>
 
             <label className="block text-sm text-gray-600 mt-3">Sizes (comma separated)</label>
-            <input className="w-full border rounded px-3 py-2 mt-2" value={(form.sizes||[]).join(",")} onChange={(e)=>setForm({...form, sizes: e.target.value.split(",").map(s=>s.trim()).filter(Boolean)})} />
+            <input className="w-full border rounded px-3 py-2 mt-2" value={(form.sizes || []).join(",")} onChange={(e) => setForm({ ...form, sizes: e.target.value.split(",").map(s => s.trim()).filter(Boolean) })} />
 
             <label className="block text-sm text-gray-600 mt-3">Image URL</label>
-            <input className="w-full border rounded px-3 py-2 mt-2" value={form.img||""} onChange={(e)=>setForm({...form, img: e.target.value})} />
+            <input className="w-full border rounded px-3 py-2 mt-2" value={form.img || ""} onChange={(e) => setForm({ ...form, img: e.target.value })} />
             <div className="mt-4">
-              <img src={form.img||"/placeholder.png"} alt="preview" style={{width:120, height:120, objectFit:"cover", borderRadius:8}} onError={(e)=>{ e.target.src="/placeholder.png"; }} />
+              <img src={form.img || "/placeholder.svg"} alt="preview" style={{ width: 120, height: 120, objectFit: "cover", borderRadius: 8 }} onError={(e) => { e.currentTarget.src = "/placeholder.svg"; }} />
             </div>
 
             <div className="mt-6 flex justify-end gap-2">
               <button onClick={onClose} className="px-4 py-2 border rounded">Cancel</button>
-              <button onClick={()=>onSave(form)} className="px-4 py-2 bg-indigo-600 text-white rounded">Save product</button>
+              <button onClick={() => onSave(form)} className="px-4 py-2 bg-indigo-600 text-white rounded">Save product</button>
             </div>
           </>
         )}
@@ -227,7 +243,7 @@ function EditModal({ open, item, type, onClose, onSave }) {
   );
 }
 
-/* ---------- cart ---------- */
+/* ---------- Cart ---------- */
 function Cart({ open, items, onClose, onRemove }) {
   const total = items.reduce((s, it) => s + it.price * it.qty, 0);
   return (
@@ -271,40 +287,26 @@ function Cart({ open, items, onClose, onRemove }) {
 
 /* ---------- MAIN APP ---------- */
 export default function App() {
-  // products are dynamic and persisted to localStorage for demo
   const [products, setProducts] = useState(() => {
-    try {
-      const raw = localStorage.getItem("godroot_products");
-      if (raw) return JSON.parse(raw);
-    } catch (e) { /* ignore */ }
+    try { const raw = localStorage.getItem("godroot_products"); if (raw) return JSON.parse(raw); } catch (e) {}
     return SAMPLE_PRODUCTS;
   });
 
   const [logoUrl, setLogoUrl] = useState(() => {
-    try {
-      return localStorage.getItem("godroot_logo") || "/logo.png";
-    } catch (e) { return "/logo.png"; }
+    try { return localStorage.getItem("godroot_logo") || "/logo.png"; } catch (e) { return "/logo.png"; }
   });
 
-  // cart & UI states
   const [quick, setQuick] = useState(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [cart, setCart] = useState([]);
   const [adminOpen, setAdminOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [editItem, setEditItem] = useState(null);
-  const [editType, setEditType] = useState("product"); // "product" | "logo"
+  const [editType, setEditType] = useState("product");
 
-  // persist products & logo when they change
-  useEffect(() => {
-    try { localStorage.setItem("godroot_products", JSON.stringify(products)); } catch (e) { /* ignore */ }
-  }, [products]);
+  useEffect(() => { try { localStorage.setItem("godroot_products", JSON.stringify(products)); } catch (e) {} }, [products]);
+  useEffect(() => { try { localStorage.setItem("godroot_logo", logoUrl); } catch (e) {} }, [logoUrl]);
 
-  useEffect(() => {
-    try { localStorage.setItem("godroot_logo", logoUrl); } catch (e) { /* ignore */ }
-  }, [logoUrl]);
-
-  // cart helpers
   function addToCart(product, size = product.sizes[0]) {
     console.log("Add to cart:", product.title, "size:", size);
     setCart(prev => {
@@ -315,39 +317,16 @@ export default function App() {
     setCartOpen(true);
   }
 
-  function removeFromCart(item) {
-    setCart(prev => prev.filter(x => !(x.id === item.id && x.size === item.size)));
-  }
+  function removeFromCart(item) { setCart(prev => prev.filter(x => !(x.id === item.id && x.size === item.size))); }
 
-  // edit/save functions
-  function openEditProduct(product) {
-    setEditType("product");
-    setEditItem(product);
-    setEditOpen(true);
-  }
-
-  function openEditLogo() {
-    setEditType("logo");
-    setEditItem(logoUrl);
-    setEditOpen(true);
-  }
+  function openEditProduct(product) { setEditType("product"); setEditItem(product); setEditOpen(true); }
+  function openEditLogo() { setEditType("logo"); setEditItem(logoUrl); setEditOpen(true); }
 
   function saveEdit(form) {
-    if (editType === "logo") {
-      setLogoUrl(form.logoUrl || "/logo.png");
-      setAdminOpen(false);
-      setEditOpen(false);
-      return;
-    }
-    // product save: if id exists update, otherwise create new
+    if (editType === "logo") { setLogoUrl(form.logoUrl || "/logo.png"); setAdminOpen(false); setEditOpen(false); return; }
     setProducts(prev => {
-      if (!form.id) {
-        // create new id
-        const newId = prev.reduce((m, x) => Math.max(m, x.id), 0) + 1;
-        return [...prev, { ...form, id: newId }];
-      } else {
-        return prev.map(p => p.id === form.id ? { ...p, ...form } : p);
-      }
+      if (!form.id) { const newId = prev.reduce((m, x) => Math.max(m, x.id), 0) + 1; return [...prev, { ...form, id: newId }]; }
+      else { return prev.map(p => p.id === form.id ? { ...p, ...form } : p); }
     });
     setEditOpen(false);
   }
@@ -359,14 +338,14 @@ export default function App() {
       <TopBar />
       <MainHeader logoUrl={logoUrl} onOpenCart={() => setCartOpen(true)} cartCount={cartCount} onOpenAdmin={() => setAdminOpen(v=>!v)} />
 
-      <main className="container py-8">
-        <section className="panel p-6">
-          <div className="flex items-center justify-between mb-6">
+      <main className="container py-6 px-4">
+        <section className="panel p-4">
+          <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-semibold">Our Products</h2>
             <div className="text-sm text-gray-500">Showing {products.length} items</div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 product-grid">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 product-grid">
             {products.map(p => (
               <ProductCard key={p.id} p={p} onQuick={(pr) => setQuick(pr)} onAdd={(pr) => addToCart(pr)} onEdit={(pr)=>openEditProduct(pr)} />
             ))}
@@ -381,13 +360,12 @@ export default function App() {
       <QuickView product={quick} onClose={() => setQuick(null)} onAdd={addToCart} />
       <Cart open={cartOpen} items={cart} onClose={() => setCartOpen(false)} onRemove={removeFromCart} />
 
-      {/* Admin panel (simple) */}
       {adminOpen && (
         <div className="fixed bottom-6 right-6 z-60">
-          <div className="card p-4 shadow-lg w-80">
+          <div className="card p-4 shadow-lg w-72">
             <h4 className="font-semibold mb-2">Admin</h4>
             <div className="text-sm text-gray-600 mb-3">Quick actions</div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <button onClick={() => { setEditType("product"); setEditItem(null); setEditOpen(true); }} className="px-3 py-2 border rounded text-sm">Add product</button>
               <button onClick={() => openEditLogo()} className="px-3 py-2 border rounded text-sm">Edit logo</button>
               <button onClick={() => { localStorage.removeItem("godroot_products"); setProducts(SAMPLE_PRODUCTS); }} className="px-3 py-2 border rounded text-sm">Reset products</button>
