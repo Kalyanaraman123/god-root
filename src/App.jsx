@@ -1,4 +1,3 @@
-// src/App.jsx
 import React, { useEffect, useState } from "react";
 
 /* ---------- sample products (keep files in public/products/) ---------- */
@@ -15,20 +14,14 @@ function currency(paise) { return `₹${(paise / 100).toFixed(2)}`; }
 
 /* ---------- TopBar ---------- */
 function TopBar() {
-  // removed "Free shipping..." per your request
-  const messages = [
-    "Hot deals this week — limited stock!"
-  ];
-
+  const messages = ["Hot deals this week — limited stock!....Hurry!!!"];
   return (
     <div className="topbar-outer">
       <div className="topbar container-inner">
         <div className="topbar-left">Best Deals</div>
         <div className="topbar-marquee" aria-hidden="true">
           <div className="marquee-track">
-            {[...messages, ...messages].map((m, i) => (
-              <div key={i} className="marquee-item">{m}</div>
-            ))}
+            {[...messages, ...messages].map((m, i) => <div key={i} className="marquee-item">{m}</div>)}
           </div>
         </div>
         <div className="topbar-right">Mon–Sat: 9am–6pm</div>
@@ -37,7 +30,7 @@ function TopBar() {
   );
 }
 
-/* ---------- Header: left nav, centered logo, right actions ---------- */
+/* ---------- Header ---------- */
 function MainHeader({ logoUrl, onOpenCart, cartCount, onOpenAdmin }) {
   return (
     <header className="main-header">
@@ -48,7 +41,7 @@ function MainHeader({ logoUrl, onOpenCart, cartCount, onOpenAdmin }) {
               <svg className="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" d="M3 6h18M3 12h18M3 18h18" /></svg>
             </button>
 
-            <nav className="left-nav">
+            <nav className="left-nav" aria-label="main navigation">
               <a className="nav-link">Shop</a>
               <a className="nav-link">Collections</a>
               <a className="nav-link">About</a>
@@ -56,13 +49,8 @@ function MainHeader({ logoUrl, onOpenCart, cartCount, onOpenAdmin }) {
           </div>
         </div>
 
-        <div className="header-center">
-          <img
-            className="site-logo"
-            src={logoUrl}
-            alt="God Root logo"
-            onError={(e) => { e.currentTarget.src = "/logo.png"; }}
-          />
+        <div className="header-center" aria-hidden="false">
+          <img className="site-logo" src={logoUrl} alt="God Root" onError={(e) => e.currentTarget.src = "/logo.png"} />
         </div>
 
         <div className="header-right">
@@ -77,7 +65,7 @@ function MainHeader({ logoUrl, onOpenCart, cartCount, onOpenAdmin }) {
               <svg className="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" d="M20.8 8.6a5.5 5.5 0 00-7.8-7.8L12 2.6l-1 1-1-1A5.5 5.5 0 002.2 8.6c0 6.8 9.8 11.6 9.8 11.6s9.8-4.8 9.8-11.6z"/></svg>
             </button>
 
-            <button onClick={onOpenCart} className="icon-btn small relative" aria-label="cart">
+            <button onClick={onOpenCart} className="icon-btn small relative cart-btn" aria-label="cart">
               <svg className="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4"/><circle cx="9" cy="20" r="1"/><circle cx="20" cy="20" r="1"/></svg>
               {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
             </button>
@@ -90,17 +78,15 @@ function MainHeader({ logoUrl, onOpenCart, cartCount, onOpenAdmin }) {
   );
 }
 
-/* ---------- Showcase (large single product) ---------- */
+/* ---------- Showcase ---------- */
 function Showcase({ product, onAdd, onQuick }) {
   if (!product) return null;
-
   return (
     <section className="showcase-outer">
       <div className="container-inner showcase">
         <div className="showcase-left">
           <div className="showcase-img-wrap">
-            <img src={product.img} alt={product.title} loading="lazy"
-                 onError={(e)=>{ e.currentTarget.src='/placeholder.svg'; }} />
+            <img src={product.img} alt={product.title} loading="lazy" onError={(e) => e.currentTarget.src = "/placeholder.svg"} />
           </div>
         </div>
 
@@ -123,7 +109,7 @@ function Showcase({ product, onAdd, onQuick }) {
 
           <div className="showcase-meta">
             <div><strong>Sizes:</strong> {product.sizes.join(", ")}</div>
-            <div className="mt-2 text-sm text-gray-400">Free returns • COD available</div>
+            <div className="mt-2 text-sm muted">Free returns • COD available</div>
           </div>
         </div>
       </div>
@@ -158,7 +144,7 @@ function ProductCard({ p, onQuick, onAdd, onEdit }) {
       <div className="p-4">
         <div className="flex items-start justify-between">
           <h3 className="text-sm font-semibold truncate">{p.title}</h3>
-          <div className="text-xs text-gray-500">Sizes: {p.sizes.join(" ")}</div>
+          <div className="text-xs muted">Sizes: {p.sizes.join(" ")}</div>
         </div>
 
         <div className="mt-3 flex items-center justify-between">
@@ -208,7 +194,7 @@ function QuickView({ product, onClose, onAdd }) {
             </div>
 
             <div className="mt-5">
-              <div className="text-sm text-gray-600 mb-2">Choose size</div>
+              <div className="text-sm muted mb-2">Choose size</div>
               <div className="flex gap-2 flex-wrap">
                 {product.sizes.map(s => (
                   <button key={s} onClick={() => setSize(s)} className={`px-3 py-1 border rounded ${size === s ? 'bg-black text-white' : ''}`}>{s}</button>
@@ -227,7 +213,7 @@ function QuickView({ product, onClose, onAdd }) {
   );
 }
 
-/* ---------- Edit modal (product + logo) ---------- */
+/* ---------- EditModal (product + logo) ---------- */
 function EditModal({ open, item, type, onClose, onSave }) {
   const [form, setForm] = useState({});
   useEffect(() => {
@@ -245,11 +231,11 @@ function EditModal({ open, item, type, onClose, onSave }) {
 
         {type === "logo" ? (
           <>
-            <label className="block text-sm text-gray-600">Logo URL (or keep /logo.png)</label>
+            <label className="block text-sm muted">Logo URL (or keep /logo.png)</label>
             <input className="w-full border rounded px-3 py-2 mt-2" value={form.logoUrl || ""} onChange={(e) => setForm({ ...form, logoUrl: e.target.value })} />
             <div className="mt-4 flex gap-2 items-center">
-              <img src={form.logoUrl || "/logo.png"} alt="preview" style={{ height: 40, objectFit: "contain" }} onError={(e) => { e.currentTarget.src = "/logo.png"; }} />
-              <div className="text-sm text-gray-500">Preview</div>
+              <img src={form.logoUrl || "/logo.png"} alt="preview" style={{ height: 40, objectFit: "contain" }} onError={(e) => e.currentTarget.src = "/logo.png"} />
+              <div className="text-sm muted">Preview</div>
             </div>
             <div className="mt-6 flex justify-end gap-2">
               <button onClick={onClose} className="px-4 py-2 border rounded">Cancel</button>
@@ -258,27 +244,27 @@ function EditModal({ open, item, type, onClose, onSave }) {
           </>
         ) : (
           <>
-            <label className="block text-sm text-gray-600">Title</label>
+            <label className="block text-sm muted">Title</label>
             <input className="w-full border rounded px-3 py-2 mt-2" value={form.title || ""} onChange={(e) => setForm({ ...form, title: e.target.value })} />
 
             <div className="mt-3 grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm text-gray-600">Price (INR)</label>
+                <label className="block text-sm muted">Price (INR)</label>
                 <input type="number" className="w-full border rounded px-3 py-2 mt-2" value={form.price ? form.price / 100 : ""} onChange={(e) => setForm({ ...form, price: Math.round(Number(e.target.value || 0) * 100) })} />
               </div>
               <div>
-                <label className="block text-sm text-gray-600">Old price (INR)</label>
+                <label className="block text-sm muted">Old price (INR)</label>
                 <input type="number" className="w-full border rounded px-3 py-2 mt-2" value={form.oldPrice ? form.oldPrice / 100 : ""} onChange={(e) => setForm({ ...form, oldPrice: Math.round(Number(e.target.value || 0) * 100) })} />
               </div>
             </div>
 
-            <label className="block text-sm text-gray-600 mt-3">Sizes (comma separated)</label>
+            <label className="block text-sm muted mt-3">Sizes (comma separated)</label>
             <input className="w-full border rounded px-3 py-2 mt-2" value={(form.sizes || []).join(",")} onChange={(e) => setForm({ ...form, sizes: e.target.value.split(",").map(s => s.trim()).filter(Boolean) })} />
 
-            <label className="block text-sm text-gray-600 mt-3">Image URL</label>
+            <label className="block text-sm muted mt-3">Image URL</label>
             <input className="w-full border rounded px-3 py-2 mt-2" value={form.img || ""} onChange={(e) => setForm({ ...form, img: e.target.value })} />
             <div className="mt-4">
-              <img src={form.img || "/placeholder.svg"} alt="preview" style={{ width: 120, height: 120, objectFit: "cover", borderRadius: 8 }} onError={(e) => { e.currentTarget.src = "/placeholder.svg"; }} />
+              <img src={form.img || "/placeholder.svg"} alt="preview" style={{ width: 120, height: 120, objectFit: "cover", borderRadius: 8 }} onError={(e) => e.currentTarget.src = "/placeholder.svg"} />
             </div>
 
             <div className="mt-6 flex justify-end gap-2">
@@ -292,24 +278,25 @@ function EditModal({ open, item, type, onClose, onSave }) {
   );
 }
 
-/* ---------- Cart ---------- */
+/* ---------- Cart (only render while open) ---------- */
 function Cart({ open, items, onClose, onRemove }) {
+  if (!open) return null;
   const total = items.reduce((s, it) => s + it.price * it.qty, 0);
   return (
-    <div className={`fixed inset-0 z-50 ${open ? "" : "pointer-events-none"}`}>
-      <div className={`absolute inset-0 bg-black/40 transition-opacity ${open ? "opacity-100" : "opacity-0"}`} onClick={onClose} />
-      <aside className={`absolute right-0 top-0 h-full w-full sm:w-96 bg-white shadow-xl transform transition-transform ${open ? "translate-x-0" : "translate-x-full"}`}>
+    <div className="cart-root fixed inset-0 z-50">
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <aside className="cart-drawer absolute right-0 top-0 h-full w-full sm:w-96 bg-white shadow-xl">
         <div className="p-4 border-b flex items-center justify-between">
           <h3 className="font-semibold">Your cart</h3>
           <button onClick={onClose}>Close</button>
         </div>
 
-        <div className="p-4 space-y-4 overflow-auto h-[calc(100%-180px)]">
-          {items.length === 0 ? <div className="text-sm text-gray-500">Cart is empty</div> : items.map((it, i) => (
+        <div className="p-4 space-y-4 overflow-auto" style={{ maxHeight: "calc(100% - 200px)" }}>
+          {items.length === 0 ? <div className="text-sm muted">Cart is empty</div> : items.map((it, i) => (
             <div key={i} className="flex items-center justify-between">
               <div>
                 <div className="font-medium text-sm">{it.title}</div>
-                <div className="text-xs text-gray-500">Size: {it.size}</div>
+                <div className="text-xs muted">Size: {it.size}</div>
                 <div className="text-sm">{currency(it.price * it.qty)}</div>
               </div>
               <div className="flex flex-col items-end gap-2">
@@ -334,7 +321,7 @@ function Cart({ open, items, onClose, onRemove }) {
   );
 }
 
-/* ---------- Footer: 5-column smart layout ---------- */
+/* ---------- Footer ---------- */
 function Footer() {
   return (
     <footer className="site-footer">
@@ -448,14 +435,13 @@ export default function App() {
       <TopBar />
       <MainHeader logoUrl={logoUrl} onOpenCart={() => setCartOpen(true)} cartCount={cartCount} onOpenAdmin={() => setAdminOpen(v=>!v)} />
 
-      {/* Showcase uses first product */}
       <Showcase product={products[0]} onAdd={addToCart} onQuick={(p)=>setQuick(p)} />
 
       <main className="container-inner site-main">
         <section className="panel p-4">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-semibold">Our Products</h2>
-            <div className="text-sm text-gray-500">Showing {Math.max(0, products.length - 1)} items</div>
+            <div className="text-sm muted">Showing {Math.max(0, products.length - 1)} items</div>
           </div>
 
           <div className="grid product-grid-3">
@@ -475,7 +461,7 @@ export default function App() {
         <div className="fixed bottom-6 right-6 z-60">
           <div className="card p-4 shadow-lg w-72">
             <h4 className="font-semibold mb-2">Admin</h4>
-            <div className="text-sm text-gray-600 mb-3">Quick actions</div>
+            <div className="text-sm muted mb-3">Quick actions</div>
             <div className="flex flex-wrap gap-2">
               <button onClick={() => { setEditType("product"); setEditItem(null); setEditOpen(true); }} className="px-3 py-2 border rounded text-sm">Add product</button>
               <button onClick={() => openEditLogo()} className="px-3 py-2 border rounded text-sm">Edit logo</button>
